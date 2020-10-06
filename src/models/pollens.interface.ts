@@ -3,6 +3,11 @@ export interface PollenRecord {
     date: number;
 }
 
+export interface CleanPollen {
+    level: number;
+    date: Date;
+}
+
 export interface Pollen {
     city: string;
     pollen: string;

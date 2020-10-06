@@ -1,10 +1,11 @@
 <script lang="ts">
     import Chart from './Chart.svelte';
+    import type {Pollen} from './models/pollens.interface';
 
     export let url: string = '';
     let index = 0;
     let data = [];
-    let currentData;
+    let currentData: Pollen;
 
     $: fetchData = fetch(url)
         .then(response => response.json())
@@ -36,10 +37,5 @@
 <style type="text/scss">
   :root {
     --zenika-red: #b21e3e;
-  }
-  h1 {
-    color: #ff3e00;
-    font-size: 1.5rem;
-    font-weight: bold;
   }
 </style>

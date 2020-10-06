@@ -1,12 +1,14 @@
 <script lang="ts">
     import {scaleTime, scaleLinear} from 'd3-scale';
+    import type {ScaleTime, ScaleLinear} from 'd3-scale';
     import {axisBottom, axisLeft} from 'd3-axis';
+    import type {Axis, AxisDomain} from 'd3-axis';
     import {timeFormat, timeParse} from 'd3-time-format';
     import {select as d3select} from 'd3-selection';
     import {line as d3line} from 'd3-shape';
     import {onMount} from 'svelte';
     import {draw} from 'svelte/transition';
-    import type {Pollen, PollenRecord} from './models/pollens.interface';
+    import type {CleanPollen, Pollen} from './models/pollens.interface';
 
 
     export let dataset: Pollen = {
@@ -21,12 +23,12 @@
     const margin = {top: 20, right: 20, bottom: 20, left: 25};
 
     // Echelles et Axes
-    let xScale,
-        yScale,
-        xAxis,
-        yAxis,
+    let xScale: ScaleTime<number, number>,
+        yScale: ScaleLinear<number, number>,
+        xAxis: Axis<AxisDomain>,
+        yAxis: Axis<AxisDomain>,
         keyId: string,
-        cleanData: Array<any>;
+        cleanData: Array<CleanPollen>;
 
     $:keyId = [dataset.pollen,dataset.city,dataset.year].join(',')
 
@@ -63,7 +65,7 @@
         }));
     //$: console.log(cleanData);
 
-    $: path = d3line()
+    $: path = d3line<CleanPollen>()
         .x(d => xScale(d.date))
         .y(d => yScale(d.level))(cleanData);
 
@@ -107,12 +109,14 @@
 
 <style type="text/scss">
 
-  .container {
+  .chart {
     width: min-content;
     width: -moz-min-content;
+
+
   }
 
-  .container .legend {
+  .legend {
     width: 100%;
     display: flex;
     justify-content: space-evenly;
