@@ -26,11 +26,7 @@
     let xScale: ScaleTime<number, number>,
         yScale: ScaleLinear<number, number>,
         xAxis: Axis<AxisDomain>,
-        yAxis: Axis<AxisDomain>,
-        keyId: string,
-        cleanData: Array<CleanPollen>;
-
-    $:keyId = [dataset.pollen,dataset.city,dataset.year].join(',')
+        yAxis: Axis<AxisDomain>;
 
     $: xScale = scaleTime()
         .domain([new Date(2000, 0, 1), new Date(2000, 11, 31)])
@@ -48,7 +44,6 @@
 
     // Parsing des timestamps
     const parse = timeParse('%Q');
-
     const getDay = (ts: number): Date => {
         const day = parse('' + ts);
         if (day) {
@@ -57,17 +52,7 @@
         return day ?? new Date(2000, 1, 1);
     }
 
-    $: cleanData = dataset.data
-        .sort((a, b) => a.date - b.date)
-        .map(({level, date}) => ({
-            level,
-            date: getDay(date),
-        }));
-    //$: console.log(cleanData);
 
-    $: path = d3line<CleanPollen>()
-        .x(d => xScale(d.date))
-        .y(d => yScale(d.level))(cleanData);
 
 
     onMount(() => {
@@ -83,16 +68,12 @@
     <h2>Données de {dataset.pollen} à {dataset.city} en {dataset.year}</h2>
     <svg {width} {height}>
         <g class="data">
-            {#key keyId}
-            <path d={path} in:draw={{duration: 2000}}></path>
-            {/key}
         </g>
 
         <g class="axis">
             <g class="xAxis" transform={`translate(0, ${height - margin.bottom})`}></g>
             <g class="yAxis" transform={`translate(${margin.left}, 0)`}></g>
         </g>
-
 
     </svg>
 
@@ -112,8 +93,6 @@
   .chart {
     width: min-content;
     width: -moz-min-content;
-
-
   }
 
   .legend {
